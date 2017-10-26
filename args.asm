@@ -5,33 +5,40 @@
 ; [rsp + 8 * 1] = ./a.out
 ; [rsp + 8 * 2] = hello
 ; [rsp + 8 * 3] = there
- 
- 
-    extern  printf
-    extern  exit
-    global  main
- 
-    section .data
-formatint   db  "There are %d parameters:", 10, 0
-formatstr   db  "%s", 10, 0
- 
-    section .text
+
+	global	main
+	extern	printf
+	
+	section	.text
 main:
-    push    qword[rsp]
-    push    formatint
-    call    printf
-    add rsp, 8 * 2
- 
-    mov rbx, 1
-PrintArgV:
-    push    qword [ rsp + 8 * rbx]
-    push    formatstr
-    call    printf
-    add rsp, 8
- 
-    inc rbx
-    cmp rbx, qword [ rsp ]
-    jng PrintArgV
-   
-    call    exit
+	mov	rcx, rdi	; argc
+	mov	rdx, rsi	; argv
+
+_print:
+	; callee-save or something
+	; printf may destroy these
+	push	rcx
+	push	rdx
+
+	mov	rdi, frmstr
+	; argv is a pointer to a pointer
+	mov	rsi, [rdx]
+	xor	eax, eax
+	call	printf
+
+	pop	rdx
+	pop	rcx
+
+	add	rdx, 8
+	dec	rcx
+	jnz	_print
+	
+	mov	rax, 60
+	mov	rdi, 1
+	syscall
+
+	section	.data
+frmstr:	db	"%s", 10, 0
+
+
 
