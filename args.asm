@@ -2,7 +2,7 @@
 ; argv = [rsp + 8*ARG_NUMBER]
 ; ./a.out hello there
 ; [rsp] = 3
-; [rsp + 8 * 1] = ./test
+; [rsp + 8 * 1] = ./a.out
 ; [rsp + 8 * 2] = hello
 ; [rsp + 8 * 3] = there
  
@@ -12,7 +12,7 @@
     global  main
  
     section .data
-formatint   db  "There are %d paramters:", 10, 0
+formatint   db  "There are %d parameters:", 10, 0
 formatstr   db  "%s", 10, 0
  
     section .text
